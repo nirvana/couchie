@@ -1,6 +1,4 @@
-#couchie
-
-(COUCHbase In Elixir)
+#Couchie
 
 couchie is a minimalist API for accessing Couchbase 2.0 servers from within elixir. It should work for elrangers as well, as elixir code can be called from erlang (since it runs on the erlang vm.)
 
