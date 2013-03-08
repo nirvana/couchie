@@ -13,3 +13,7 @@ Thus only native erlang or elixir code is used here.
 - Basic support for data operations such as create, read, update, delete.
 - Simple translation from the Couchbase View's REST API to elixir functions, allowing complex queries to be supported.
 
+### working notes
+
+% options: {host, port, connection pool size}
+erlmc:start([{"localhost", 12233, 100}]).
