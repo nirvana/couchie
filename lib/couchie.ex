@@ -1,0 +1,2 @@
+defmodule Couchie do
+end
