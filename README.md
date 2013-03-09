@@ -2,18 +2,33 @@
 
 couchie is a minimalist API for accessing Couchbase 2.0 servers from within elixir. It should work for elrangers as well, as elixir code can be called from erlang (since it runs on the erlang vm.)
 
-This project is deliberately *not* using the libcouchbase library, or any NIFs due to the limitations of NIFs.  When erlang calls an NIF, the scheduler is suspended and no other processes can run, no matter how long the NIF call takes to return.  This breaks the concurrent nature of erlang.  Secondly, if a NIF crashes it can bring down the entire erlang VM. 
+This project is deliberately *not* using the libcouchbase library, or any NIFs due to the limitations of NIFs.
 
-Thus only native erlang or elixir code is used here.
 
 ##Current functionality
-- project just begun, nothing written yet.
+- Basic commands: Set, Get, Add, Delete, Stats
 
 ##Planned functionality
-- Basic support for data operations such as create, read, update, delete.
 - Simple translation from the Couchbase View's REST API to elixir functions, allowing complex queries to be supported.
 
-### working notes
+### Example
 
-% options: {host, port, connection pool size}
-erlmc:start([{"localhost", 12233, 100}]).
+	$ iex -S mix
+	Erlang R16B (erts-5.10.1) [source-05f1189] [64-bit] [smp:8:8] [async-threads:10] [hipe] [kernel-poll:false]
+
+	Compiled lib/couchie.ex
+	Generated couchie.app
+	Interactive Elixir (0.8.1) - press Ctrl+C to exit (type h() ENTER for help)
+	iex(1)> Couchie.start
+	:ok
+	iex(2)> Couchie.set "test_key", "{\"test_json_key\":\"test_json_value\"}"
+	""
+	iex(3)> Couchie.get "test_key"
+	"{\"test_json_key\":\"test_json_value\"}"
+	iex(4)> Couchie.mget ["test_key", "binary key", "atom_key"]
+	[{"test_key","{\"test_json_key\":\"test_json_value\"}"},{"binary key","{ \"key\":\"value\"}"},{"atom_key","{ \"key\":\"value\"}"}]
+	iex(5)> Couchie.delete "test_key"
+	""
+	iex(6)> Couchie.get "test_key"
+	""
+
