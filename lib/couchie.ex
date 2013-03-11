@@ -4,12 +4,11 @@ defmodule Couchie do
       """
    
      @doc """
- 	Start a connection pool(s) to server(s):
+ 	Start a connection pool to the server:
  	Start takes a list of pool configurations, each of which is a tuple, 
  	consisting of the hostname (as char list), port and number of connections.
 	
-	Couchie.start([{'localhost', 11211, 5},
-				'some.other.host', 11211, 10])
+	Couchie.start([{'localhost', 11211, 5}])
 	or
 	Couchie.start()  # connects on localhost at default memcached port
   	"""
@@ -108,7 +107,7 @@ defmodule Couchie do
 	end
 
 end
-#handle_call(:pop, _from, [h|stack])
+#
 # 	
 #
 

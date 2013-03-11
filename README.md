@@ -32,3 +32,10 @@ This project is deliberately *not* using the libcouchbase library, or any NIFs d
 	iex(6)> Couchie.get "test_key"
 	""
 
+## License
+
+Copyright 2013, all rights reserved.  
+
+Please note that this code will eventually be released as open source, however, 
+the license is not yet determined and the API is not stable. Until then it remains copyrighted.
+It is available on github for evaluation purposes only.
