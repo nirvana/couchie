@@ -32,6 +32,4 @@ defmodule Couchie.Mixfile do
 end
 
 #
-#applications: [:erlmc]
-# {:erlmc, "0.1", git: "https://github.com/n1rvana/erlmc.git"}
 #{:cowboy, github: "extend/cowboy"}

@@ -1,6 +1,13 @@
 defmodule Couchie do
      @moduledoc """
-      Minimalist Elixir interface to Couchbase 2.0
+      Minimalist Elixir interface to Couchbase 2.0.
+		
+		Couchie is based on cberl which is a NIF of the libcouchbase & Jiffy JSON encoder NIF.
+		
+		JSON support is built in.  Pass in terms and they are encoded as JSON. 
+		When you fetch JSON documents you get terms.
+		
+		To store raw data, pass in a binary.
       """
    
 	@doc """
@@ -15,30 +22,33 @@ defmodule Couchie do
 	      {ok, <0.XX.0>} #=> successful connection to default bucket on localhost
 
 			# if your bucket is password protected:
-	      Couchie.open(:secret, 10, "localhost:8091", "bucket_name", "bucket_pasword")
+	      Couchie.open(:secret, 10, 'localhost:8091', 'bucket_name', 'bucket_pasword')
 	      {ok, <0.XX.0>} #=> successful connection to the named bucket, which you can access using the id "secret"
 			
 			# if your bucket isn't password protected (and isn't default)
-	      Couchie.open(:application, 10, "localhost:8091", "bucket_name", "")
+	      Couchie.open(:connection, 10, 'localhost:8091", 'bucket_name')
 	      {ok, <0.XX.0>} #=> successful connection to the named bucket, which you can access using the id "application"
 
 	  """
  	def open(name) do  
-		:cberl.start_link(name, 10)
+		open(name, 10, 'localhost:8091', '')
  	end
 
  	def open(name, size, host, bucket) do  
-		:cberl.start_link(name, 10)
+		open(name, size, host, bucket, '')
  	end
 
   	def open(name, size, host, bucket, pass) do  #currently usernames are set to bucket names in this interface.
-		:cberl.start_link(name, size, host, bucket, pass, bucket)
+		:cberl.start_link(name, size, host, bucket, pass, bucket, )
   	end
-	
+
+#cberl:start_link(PoolName, NumCon, Host, Username, Password, BucketName, Transcoder) ->	
+
+
      @doc """
  	Shutdown the connection to a particular bucket
 	
-		Couchie.stop(:application)
+		Couchie.stop(:connection)
   	"""
 	def quit(pool) do
 		:cberl.stop(pool)
@@ -68,7 +78,7 @@ defmodule Couchie do
 	      Couchie.set(:default, "key", "document data", 0)
 	  """
 	def set(connection, key, document, expiration) do
-		:cberl.set(connection, key, document, expiration)
+		:cberl.set(connection, key, expiration, document)  # NOTE: cberl parameter order is different!
 	end
  
      @doc """
