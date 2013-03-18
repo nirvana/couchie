@@ -2,14 +2,7 @@
 
 couchie is a minimalist API for accessing Couchbase 2.0 servers from within elixir. It should work for elrangers as well, as elixir code can be called from erlang (since it runs on the erlang vm.)
 
-This project is deliberately *not* using the libcouchbase library, or any NIFs due to the limitations of NIFs.
-
-
-##Current functionality
-- Basic commands: Set, Get, Add, Delete, Stats
-
-##Planned functionality
-- Simple translation from the Couchbase View's REST API to elixir functions, allowing complex queries to be supported.
+I'm experimenting with different backends, currently migrating couchie to use libcouchbase via chikita's cberl.
 
 ### Example
 
@@ -31,6 +24,15 @@ This project is deliberately *not* using the libcouchbase library, or any NIFs d
 	""
 	iex(6)> Couchie.get "test_key"
 	""
+
+##Current functionality
+- Basic commands: Set, Get, Add, Delete, Stats
+
+##Planned functionality
+- named connections.
+- Support multiple buckets
+- Support raw and json encoding of data
+- Simple translation from the Couchbase View's REST API to elixir functions, allowing complex queries to be supported.
 
 ## License
 

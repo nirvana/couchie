@@ -3,109 +3,104 @@ defmodule Couchie do
       Minimalist Elixir interface to Couchbase 2.0
       """
    
-     @doc """
- 	Start a connection pool to the server:
- 	Start takes a list of pool configurations, each of which is a tuple, 
- 	consisting of the hostname (as char list), port and number of connections.
+	@doc """
+ 	Open a connection pool to the server:
+ 	Open takes a connection configuration consisting of connection name, 
+	size of the pool to set up, hostname & port, username, password.
+
+	  ## Examples
+
+	  		# open connection named "default_connection" to the default bucket, which should be used for testing only
+	      Couchie.open(:default_connection)
+	      {ok, <0.XX.0>} #=> successful connection to default bucket on localhost
+
+			# if your bucket is password protected:
+	      Couchie.open(:secret, 10, "localhost:8091", "bucket_name", "bucket_pasword")
+	      {ok, <0.XX.0>} #=> successful connection to the named bucket, which you can access using the id "secret"
+			
+			# if your bucket isn't password protected (and isn't default)
+	      Couchie.open(:application, 10, "localhost:8091", "bucket_name", "")
+	      {ok, <0.XX.0>} #=> successful connection to the named bucket, which you can access using the id "application"
+
+	  """
+ 	def open(name) do  
+		:cberl.start_link(name, 10)
+ 	end
+
+ 	def open(name, size, host, bucket) do  
+		:cberl.start_link(name, 10)
+ 	end
+
+  	def open(name, size, host, bucket, pass) do  #currently usernames are set to bucket names in this interface.
+		:cberl.start_link(name, size, host, bucket, pass, bucket)
+  	end
 	
-	Couchie.start([{'localhost', 11211, 5}])
-	or
-	Couchie.start()  # connects on localhost at default memcached port
-  	"""
-	def start(connection_list) do
-		:erlmc.start(connection_list)
-	end
      @doc """
-	Couchie.start()  # connects on localhost at default memcached port
+ 	Shutdown the connection to a particular bucket
+	
+		Couchie.stop(:application)
   	"""
-	def start() do
-		:erlmc.start()
+	def quit(pool) do
+		:cberl.stop(pool)
+	end
+	
+	@doc """
+ 	Create document if it doesn't exist, or replace it if it does.
+	First parameter is the connection you passed into Couchie.open()
+
+	  ## Examples
+
+	  		# 
+	      Couchie.set(:default, "key", "document data")
+	  """
+	def set(connection, key, document) do
+		Couchie.set(connection, key, document, 0)
 	end
 
-     @doc """
- 	Shutdown the connection to the server
-	
-	Couchie.quit()
-  	"""
-	def quit() do
-		:erlmc.quit()
-	end
+	@doc """
+ 	Create document if it doesn't exist, or replace it if it does.
+	First parameter is the connection you passed into Couchie.open()
+ 	If you want the document to be purged after a period of time, use the Expiration.
+	Set expiration to zero for permanent storage (or use set/3)
 
-     @doc """
- 	Returns the stats object provided by the server. 
-	
-	Couchie.stats()
-  	"""
-	def stats() do
-		:erlmc.stats()
-	end
-	
-     @doc """
- 	Set document.  Keys and documents should be binary. Documents should be valid json.
-	
-	Couchie.set("test_key","{ \"json_key\":\"json_value_string\"}")
-  	"""
-	def set(key, document) do
-		:erlmc.set(key, document)
-	end
+	  ## Example
 
-     @doc """
- 	Set expiring document.  
-	Keys and documents should be binary. 
-	Expiration time should be integer
-	Documents should be valid json.
-	
-	Couchie.set("test_key","{ \"json_key\":\"json_value_string\"}", 123)
-  	"""
-	def set(key, document, expiration) do
-		:erlmc.set(key, document, expiration)
-	end
-
-     @doc """
- 	Add document.  Keys and documents should be binary. Documents should be valid json.
-	
-	Couchie.set("test_key","{ \"json_key\":\"json_value_string\"}")
-  	"""
-	def add(key, value) do
-		:erlmc.add(key, value)
+	      Couchie.set(:default, "key", "document data", 0)
+	  """
+	def set(connection, key, document, expiration) do
+		:cberl.set(connection, key, document, expiration)
 	end
  
      @doc """
  	Get document.  Keys should be binary. 
-	
-	Couchie.get("test_key")
+  	## Example
+
+      Couchie.get(:connection, "test_key")
   	"""
-	def get(key) do
-		:erlmc.get(key)
+	def get(connection, key) do
+		:cberl.get(connection, key)
 	end
  
      @doc """
  	Get multiple documents from a list of keys  Keys should be binary. 
-	
-	Couchie.get("test_key")
+  	## Example
+
+      Couchie.mget(:connection, ["test_key", "another key"])
   	"""
-	def mget(keys) do
-		:erlmc.get_many(keys)
+	def mget(connection, keys) do
+		:cberl.mget(connection, keys)
 	end
 
      @doc """
- 	Delete document.  Keys should be binary. 
-	
-	Couchie.delete("test_key")
+ 	Delete document.  Key should be binary. 
+  	## Example
+
+      Couchie.delete(:connection, "test_key")
   	"""
-	def delete(key) do
-		:erlmc.delete(key)
+	def delete(connection, key) do
+		:cberl.remove(connection, key)
 	end
  
-     @doc """
- 	Version Info from the server
-	
-	Couchie.version()
-  	"""
-	def version() do
-		:erlmc.version()
-	end
-
 end
 #
 # 	
