@@ -5,7 +5,7 @@ defmodule Couchie do
 		Couchie is based on cberl which is a NIF of the libcouchbase & Jiffy JSON encoder NIF.
 		
 		JSON support is built in.  Pass in terms and they are encoded as JSON. 
-		When you fetch JSON documents you get terms.
+		When you  fetch JSON documents you get terms.
 		
 		To store raw data, pass in a binary.
       """
