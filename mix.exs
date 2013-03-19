@@ -15,15 +15,21 @@ defmodule Couchie.Mixfile do
  
   @doc "Configuration for the OTP application"
   def application do
-    [  ]
+    [
+		 applications: [:cberl]  
+	 ]
   end
 
   # Returns the list of dependencies in the format:
   # {:erlmc, "0.1", git: "https://github.com/n1rvana/erlmc.git"}
   defp deps do
-    [{:erlmc, git: "https://github.com/n1rvana/erlmc.git"}]
+    [
+		 {:jiffy, github: "davisp/jiffy"},
+		 {:poolboy, github: "devinus/poolboy"},
+		 {:cberl, github: "aliyakamercan/cberl"}
+	 ]
   end
 end
 
 #
-#applications: [:erlmc]
+#{:cowboy, github: "extend/cowboy"}
