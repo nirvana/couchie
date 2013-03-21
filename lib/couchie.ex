@@ -31,10 +31,14 @@ defmodule Couchie do
 
 	  """
  	def open(name) do  
-		open(name, 10, 'localhost:8091', '')
+		open(name, 100, 'localhost:8091', '')
  	end
 
- 	def open(name, size, host, bucket) do  
+ 	def open(name, size) do  
+		open(name, size, 'localhost:8091', '')
+ 	end
+	
+	def open(name, size, host, bucket) do  
 		open(name, size, host, bucket, '')
  	end
 
@@ -48,9 +52,9 @@ defmodule Couchie do
      @doc """
  	Shutdown the connection to a particular bucket
 	
-		Couchie.stop(:connection)
+		Couchie.close(:connection)
   	"""
-	def quit(pool) do
+	def close(pool) do
 		:cberl.stop(pool)
 	end
 	
@@ -88,7 +92,8 @@ defmodule Couchie do
       Couchie.get(:connection, "test_key")
   	"""
 	def get(connection, key) do
-		:cberl.get(connection, key)
+		result = :cberl.get(connection, key)
+		postprocess(result)
 	end
  
      @doc """
@@ -98,7 +103,21 @@ defmodule Couchie do
       Couchie.mget(:connection, ["test_key", "another key"])
   	"""
 	def mget(connection, keys) do
-		:cberl.mget(connection, keys)
+		results = :cberl.mget(connection, keys)
+
+	end
+
+    @doc """
+ 	Remove the envelope around JSON results. Get uses this by default. 
+   	"""
+	def postprocess({key,cas,value}) do
+		if is_binary(value) do
+			{key, cas, value}
+		else
+			value2 = {value}  # remove enclosing tuple, get list.
+			value3 = HashDict.new value2
+			{key, cas, value3}
+		end
 	end
 
      @doc """
