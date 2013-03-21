@@ -104,7 +104,7 @@ defmodule Couchie do
   	"""
 	def mget(connection, keys) do
 		results = :cberl.mget(connection, keys)
-
+		Enum.map results, Couchie.postprocess(result)
 	end
 
     @doc """
