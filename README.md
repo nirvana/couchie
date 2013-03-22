@@ -4,13 +4,14 @@ Couchie is a minimalist API for accessing Couchbase 2.0 servers from within elix
 
 Couchie uses cberl (libcouchbase as a NIF) for database access which also includes Jiffy for handling the JSON couchbase speaks.
 
-Couchie expects and returns two data types: Binaries and Dicts. 
+Couchie expects and returns two data types: Binaries and Dicts.  This is because Couchbase is a document oriented database which supports two types of documents: raw, and JSON.  While there are many different structures that JSON can take, such as pure lists and complex heirarchies,
+the couchbase view later assumes the documents are effectively dicts, and working just with dicts gives us a cheap, pseudo, ORM. 
 
 Binaries are stored raw in couchbase, while HashDicts are converted to-from JSON.  This conversion is simplistic, as it doesn't dive into the values to see if they are Dicts as well. 
 
-Theoretically lists should be supported in the future, but this part of the API is still pretty experimental. 
-
 Please note that cberl, and libcouchbase itself are both relatively new, while Jiffy seems stable. 
+
+Elixir record support seems like a good direction for the future, but is out of scope for current work. Feel free to implement it though.
 
 ### Example
 
@@ -54,9 +55,3 @@ Please note that cberl, and libcouchbase itself are both relatively new, while J
 ##Planned functionality
 - Simple translation from the Couchbase View's REST API to elixir functions, allowing complex queries to be supported.
 
-## License
-
-Copyright 2013, all rights reserved.  
-
-Please note that this code will eventually be released as open source, however, 
-the license is not yet determined and the API is not stable. 

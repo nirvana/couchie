@@ -90,10 +90,10 @@ defmodule Couchie do
  	Turn Dict into list for JSON conversion. Pass binaries along unmolested.
    	"""
 	def preprocess(document) do
-		if is_binary(document) do
-			document
-		else
-			Dict.to_list document
+		case document do
+			document when is_list(document) -> document #pass on lists unmolested
+			document when is_binary(document) -> document #pass on binaries unmolested
+			document -> {Dict.to_list document}   #If not a list or binary, it's a hashdict.
 		end
 	end
 
@@ -123,13 +123,18 @@ defmodule Couchie do
  	Remove the envelope around JSON results. Turn JSON structure into HashDict 
    	"""
 	def postprocess({key,cas,value}) do
-		if is_binary(value) do
-			{key, cas, value}
-		else
-			{value2} = value  # remove enclosing tuple, get list.
-			value3 = HashDict.new value2
-			{key, cas, value3}
+		case value do
+			{[h|_]} when is_tuple(h) -> #If the first item is a tuple, we figure its a proplist.
+				proplist_to_dict(key, cas, value)
+			value when is_binary(value) -> {key, cas, value}  #just pass on binaries.
+			_ -> {key, cas, value}  # anything else (Eg: straight list) we pass on unmolested
 		end
+	end
+
+	defp proplist_to_dict(key, cas, value) do
+		{value2} = value  # remove enclosing tuple, get list.
+		value3 = HashDict.new value2
+		{key, cas, value3}
 	end
 
      @doc """
