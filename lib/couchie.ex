@@ -82,9 +82,21 @@ defmodule Couchie do
 	      Couchie.set(:default, "key", "document data", 0)
 	  """
 	def set(connection, key, document, expiration) do
-		:cberl.set(connection, key, expiration, document)  # NOTE: cberl parameter order is different!
+		doc2 = Couchie.preprocess document
+		:cberl.set(connection, key, expiration, doc2)  # NOTE: cberl parameter order is different!
 	end
  
+    @doc """
+ 	Turn Dict into list for JSON conversion. Pass binaries along unmolested.
+   	"""
+	def preprocess(document) do
+		if is_binary(document) do
+			document
+		else
+			Dict.to_list document
+		end
+	end
+
      @doc """
  	Get document.  Keys should be binary. 
   	## Example
@@ -104,17 +116,17 @@ defmodule Couchie do
   	"""
 	def mget(connection, keys) do
 		results = :cberl.mget(connection, keys)
-		Enum.map results, Couchie.postprocess(result)
+		Enum.map results, Couchie.postprocess(&1)
 	end
 
     @doc """
- 	Remove the envelope around JSON results. Get uses this by default. 
+ 	Remove the envelope around JSON results. Turn JSON structure into HashDict 
    	"""
 	def postprocess({key,cas,value}) do
 		if is_binary(value) do
 			{key, cas, value}
 		else
-			value2 = {value}  # remove enclosing tuple, get list.
+			{value2} = value  # remove enclosing tuple, get list.
 			value3 = HashDict.new value2
 			{key, cas, value3}
 		end
