@@ -102,6 +102,7 @@ defmodule Couchie do
   	## Example
 
       Couchie.get(:connection, "test_key")
+      #=> {"test_key" 1234567890, "value"}  # The middle figure is the CAS for this document.
   	"""
 	def get(connection, key) do
 		result = :cberl.get(connection, key)
