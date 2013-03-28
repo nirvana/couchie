@@ -148,6 +148,37 @@ defmodule Couchie do
 		:cberl.remove(connection, key)
 	end
  
+
+
+     @doc """
+ 	Simple synchronous fetch view for when you have the specific url & parameters built. 
+  	## Example
+
+      Couchie.view("http://example.com:port/_design/foo/_view/bar")
+  	"""
+	def view(url) do
+		case :ibrowse.send_req(url, [], get) do
+			{:error, reason} -> {:error, reason}
+			{:ok, return_code, headers, body} -> view_process(return_code, headers, body)
+	end
+ 
+	def view_process (return_code, headers, body) do
+		headers_dict = HashDict.new headers
+		
+
+
+
+	end
+
+
+
+
+
+
+
+
+
+
 end
 #
 # 	
