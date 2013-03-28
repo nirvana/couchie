@@ -16,7 +16,7 @@ defmodule Couchie.Mixfile do
   @doc "Configuration for the OTP application"
   def application do
     [
-		 applications: [:cberl]  
+		 applications: [:cberl, :ibrowse]  
 	 ]
   end
 
@@ -24,12 +24,15 @@ defmodule Couchie.Mixfile do
   # {:erlmc, "0.1", git: "https://github.com/n1rvana/erlmc.git"}
   defp deps do
     [
-		 {:jiffy, github: "davisp/jiffy"},
-		 {:poolboy, github: "devinus/poolboy"},
-		 {:cberl, github: "aliyakamercan/cberl"}
-	 ]
+      {:jiffy, github: "davisp/jiffy"},
+		  {:poolboy, github: "devinus/poolboy"},
+		  {:cberl, github: "aliyakamercan/cberl"},
+      {:ibrowse, github: "cmullaparthi/ibrowse"}	 
+    ]
   end
 end
 
 #
 #{:cowboy, github: "extend/cowboy"}
+#{:cowboy, github: "extend/cowboy"}
+#{:ibrowse, github: "cmullaparthi/ibrowse"}
