@@ -157,14 +157,15 @@ defmodule Couchie do
       Couchie.view("http://example.com:port/_design/foo/_view/bar")
   	"""
 	def view(url) do
-		case :ibrowse.send_req(url, [], get) do
+		case :ibrowse.send_req(url, [], :get) do
 			{:error, reason} -> {:error, reason}
 			{:ok, return_code, headers, body} -> view_process(return_code, headers, body)
+		end
 	end
  
-	def view_process (return_code, headers, body) do
+	def view_process(return_code, headers, body) do
 		headers_dict = HashDict.new headers
-		
+## this is not finished!  views not implemented yet, as I explore a different direction.		
 
 
 
