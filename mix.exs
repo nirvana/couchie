@@ -26,8 +26,7 @@ defmodule Couchie.Mixfile do
     [
       {:jiffy, github: "davisp/jiffy"},
 		  {:poolboy, github: "devinus/poolboy"},
-		  {:cberl, github: "aliyakamercan/cberl"},
-      {:ibrowse, github: "cmullaparthi/ibrowse"}	 
+		  {:cberl, github: "aliyakamercan/cberl"}
     ]
   end
 end
@@ -36,3 +35,5 @@ end
 #{:cowboy, github: "extend/cowboy"}
 #{:cowboy, github: "extend/cowboy"}
 #{:ibrowse, github: "cmullaparthi/ibrowse"}
+#
+#
