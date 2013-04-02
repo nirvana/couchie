@@ -16,7 +16,7 @@ defmodule Couchie.Mixfile do
   @doc "Configuration for the OTP application"
   def application do
     [
-		 applications: [:cberl, :ibrowse]  
+		 applications: [:cberl] #, :ibrowse 
 	 ]
   end
 
