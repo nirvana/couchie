@@ -2,6 +2,10 @@
 
 Couchie is a minimalist API for accessing Couchbase 2.0 servers from within elixir. It should work for elrangers as well, as elixir code can be called from erlang (since it runs on the erlang vm.)
 
+### Status:  CRUD Working, Views being implemented. 
+
+### Description
+
 Couchie uses cberl (libcouchbase as a NIF) for database access which also includes Jiffy for handling the JSON couchbase speaks.
 
 Couchie expects and returns two data types: Binaries and Dicts.  This is because Couchbase is a document oriented database which supports two types of documents: raw, and JSON.  While there are many different structures that JSON can take, such as pure lists and complex heirarchies,
