@@ -58,7 +58,7 @@ must use the license verbatim, including these provisions protecting the license
 3. If you wish to make a derivative, you must use a distinctly different name.
 
 Minor changes or corrections should be submitted as pull requests or issues here: 
-https://github.com/NirvanaPlatform/TFL
+https://github.com/nirvana/TFL
 
 Yes, I know this is a bit overwrought, but the integrity of the license is protected by
 not having a million derivatives running around, sowing confusion wherever they go. 
