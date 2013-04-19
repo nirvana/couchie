@@ -106,7 +106,10 @@ defmodule Couchie do
   	"""
 	def get(connection, key) do
 		result = :cberl.get(connection, key)
-		postprocess(result)
+		case result do
+			{_, {:error, _}} -> result
+			_ -> postprocess(result)
+		end
 	end
  
      @doc """
@@ -117,12 +120,18 @@ defmodule Couchie do
   	"""
 	def mget(connection, keys) do
 		results = :cberl.mget(connection, keys)
-		Enum.map results, Couchie.postprocess(&1)
+		case results do
+			{_, {:error, _}} -> results
+			_ -> Enum.map results, Couchie.postprocess(&1)
+		end
 	end
 
     @doc """
  	Remove the envelope around JSON results. Turn JSON structure into HashDict 
    	"""
+   	def postprocess({_, {:error, _}}=result) do
+   		result
+   	end
 	def postprocess({key,cas,value}) do
 		case value do
 			{[h|_]} when is_tuple(h) -> #If the first item is a tuple, we figure its a proplist.
