@@ -43,7 +43,7 @@ defmodule Couchie do
  	end
 
   	def open(name, size, host, bucket, pass) do  #currently usernames are set to bucket names in this interface.
-		:cberl.start_link(name, size, host, bucket, pass, bucket, )
+		:cberl.start_link(name, size, host, bucket, pass, bucket)
   	end
 
 #cberl:start_link(PoolName, NumCon, Host, Username, Password, BucketName, Transcoder) ->	
