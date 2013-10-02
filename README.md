@@ -49,6 +49,16 @@ Elixir record support seems like a good direction for the future, but is out of 
 	:ok
 	iex(13)> Couchie.get(:cache, "3-18-13-7-12")
 	{"3-18-13-7-12",216172782113783808,["a",'b']}
+	# Storing data structures, like a HashDict
+	iex(14)> bar = HashDict.new   
+	#HashDict<[]>
+	iex(15)> bar = bar |> HashDict.put("key", "value")   
+	#HashDict<[{"key", "value"}]>
+	iex(16)> Couchie.set(:default, "bar", bar)
+	:ok
+	iex(17)> Couchie.get(:default, "bar")
+	{"bar", 983466356890402816, #HashDict<[{"key", "value"}]>}
+
 
 ##Current functionality
 - Basic commands: Set, Get, MGet, Delete
