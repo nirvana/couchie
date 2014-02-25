@@ -123,7 +123,7 @@ defmodule Couchie do
 		results = :cberl.mget(connection, keys)
 		case results do
 			{_, {:error, _}} -> results
-			_ -> Enum.map results, Couchie.postprocess(&1)
+			_ -> Enum.map results, &Couchie.postprocess/1
 		end
 	end
 

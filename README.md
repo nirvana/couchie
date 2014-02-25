@@ -17,6 +17,12 @@ Please note that cberl, and libcouchbase itself are both relatively new, while J
 
 Elixir record support seems like a good direction for the future, but is out of scope for current work. Feel free to implement it though.
 
+### Building
+
+Note: to build, you need to have libcouchbase installed.
+  
+	brew install libcouchbase
+
 ### Example
 
 
