@@ -46,7 +46,11 @@ defmodule Couchie do
 	def open(name, size, host, bucket) do  # assume the bucket user and pass are the same as bucket name
 		open(name, size, host, bucket, bucket, bucket)
  	end
-  	
+
+ 	def open(name, size, host, bucket, password) do  # username is same as bucket name
+		open(name, size, host, bucket, bucket, password)
+ 	end
+ 	
   	def open(name, size, host, bucket, username, pass) do  #currently usernames are set to bucket names in this interface.
   		IO.puts "Opening #{name}, #{size}, #{host}, #{username}, #{pass}, #{bucket} "
 		:cberl.start_link(name, size, host, username, pass, bucket)
