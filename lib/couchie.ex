@@ -26,22 +26,31 @@ defmodule Couchie do
 	      {ok, <0.XX.0>} #=> successful connection to the named bucket, which you can access using the id "secret"
 			
 			# if your bucket isn't password protected (and isn't default)
-	      Couchie.open(:connection, 10, 'localhost:8091", 'bucket_name')
+	      Couchie.open(:connection, 10, 'localhost:8091', 'bucket_name')
 	      {ok, <0.XX.0>} #=> successful connection to the named bucket, which you can access using the id "application"
 
 	  """
  	def open(name) do  
-		open(name, 100, 'localhost:8091', '')
+		open(name, 10, 'localhost:8091')
  	end
 
  	def open(name, size) do  
-		open(name, size, 'localhost:8091', '')
+		open(name, size, 'localhost:8091')
  	end
 	
+  	def open(name, size, host) do  
+  		IO.puts "Opening #{name}, #{size}, #{host}"
+		:cberl.start_link(name, size, host)
+  	end
+
 	def open(name, size, host, bucket) do  # assume the bucket user and pass are the same as bucket name
 		open(name, size, host, bucket, bucket, bucket)
  	end
 
+ 	def open(name, size, host, bucket, password) do  # username is same as bucket name
+		open(name, size, host, bucket, bucket, password)
+ 	end
+ 	
   	def open(name, size, host, bucket, username, pass) do  #currently usernames are set to bucket names in this interface.
   		IO.puts "Opening #{name}, #{size}, #{host}, #{username}, #{pass}, #{bucket} "
 		:cberl.start_link(name, size, host, username, pass, bucket)
@@ -123,7 +132,7 @@ defmodule Couchie do
 		results = :cberl.mget(connection, keys)
 		case results do
 			{_, {:error, _}} -> results
-			_ -> Enum.map results, Couchie.postprocess(&1)
+			_ -> Enum.map results, &Couchie.postprocess/1
 		end
 	end
 
