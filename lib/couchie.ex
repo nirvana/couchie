@@ -168,6 +168,17 @@ defmodule Couchie do
 	end
  
 
+    @doc """
+ 	Query the database, getting a list of documents. 
+  	## Example
+
+      Couchie.delete(:connection, "test_key")
+  	"""
+	def query(host, parameters) do
+#
+	end
+
+#delete the old stuff below when above is decent
 
      @doc """
  	Simple synchronous fetch view for when you have the specific url & parameters built. 
