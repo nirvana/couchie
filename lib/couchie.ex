@@ -38,10 +38,11 @@ defmodule Couchie do
 		open(name, size, 'localhost:8091')
  	end
 	
-  	def open(name, size, host) do  
-  		IO.puts "Opening #{name}, #{size}, #{host}"
-		:cberl.start_link(name, size, host)
-  	end
+	def open(name, size, host) do  
+		IO.puts "Opening #{name}, #{size}, #{host}"
+	  :cberl.start_link(name, size, host)
+    IO.puts "Opened #{name}, #{size}, #{host}"
+ 	end
 
 	def open(name, size, host, bucket) do  # assume the bucket user and pass are the same as bucket name
 		open(name, size, host, bucket, bucket, bucket)
@@ -51,13 +52,10 @@ defmodule Couchie do
 		open(name, size, host, bucket, bucket, password)
  	end
  	
-  	def open(name, size, host, bucket, username, pass) do  #currently usernames are set to bucket names in this interface.
-  		IO.puts "Opening #{name}, #{size}, #{host}, #{username}, #{pass}, #{bucket} "
-		:cberl.start_link(name, size, host, username, pass, bucket)
-  	end
-#start_link(PoolName, NumCon, Host, Username, Password, BucketName) ->
-#cberl:start_link(PoolName, NumCon, Host, Username, Password, BucketName, Transcoder) ->	
-
+	def open(name, size, host, bucket, username, pass) do  #currently usernames are set to bucket names in this interface.
+		IO.puts "Opening #{name}, #{size}, #{host}, #{username}, #{pass}, #{bucket} "
+  	:cberl.start_link(name, size, host, username, pass, bucket)
+	end
 
      @doc """
  	Shutdown the connection to a particular bucket
@@ -87,7 +85,7 @@ defmodule Couchie do
  	If you want the document to be purged after a period of time, use the Expiration.
 	Set expiration to zero for permanent storage (or use set/3)
 
-	  ## Example
+     ## Example
 
 	      Couchie.set(:default, "key", "document data", 0)
 	  """
@@ -127,6 +125,15 @@ defmodule Couchie do
 		:cberl.remove(connection, key)
 	end
 
+     @doc """
+  Delete document.  Key should be binary. 
+    ## Example
+
+      Couchie.delete(:connection, "test_key")
+    """
+  def query(connection, doc, view, args) do
+    :cberl.view(connection, doc, view, args)
+  end
 
 end
 

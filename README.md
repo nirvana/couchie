@@ -65,6 +65,9 @@ Note: to build, you need to have libcouchbase installed.
 	iex(17)> Couchie.get(:default, "bar")
 	{"bar", 983466356890402816, #HashDict<[{"key", "value"}]>}
 
+## Simple support for cberl views"
+Couchie.open(:beer, 10, 'cb.server.w.beer.sample:8091', 'beer-sample', 'beer-sample', '')
+Couchie.query(:beer, 'beer', 'brewery_beers', [{:limit, 10}])
 
 ##Current functionality
 - Basic commands: Set, Get, MGet, Delete
