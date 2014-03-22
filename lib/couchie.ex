@@ -38,10 +38,11 @@ defmodule Couchie do
 		open(name, size, 'localhost:8091')
  	end
 	
-  	def open(name, size, host) do  
-  		IO.puts "Opening #{name}, #{size}, #{host}"
-		:cberl.start_link(name, size, host)
-  	end
+	def open(name, size, host) do  
+		IO.puts "Opening #{name}, #{size}, #{host}"
+	  :cberl.start_link(name, size, host)
+    IO.puts "Opened #{name}, #{size}, #{host}"
+ 	end
 
 	def open(name, size, host, bucket) do  # assume the bucket user and pass are the same as bucket name
 		open(name, size, host, bucket, bucket, bucket)
@@ -51,13 +52,10 @@ defmodule Couchie do
 		open(name, size, host, bucket, bucket, password)
  	end
  	
-  	def open(name, size, host, bucket, username, pass) do  #currently usernames are set to bucket names in this interface.
-  		IO.puts "Opening #{name}, #{size}, #{host}, #{username}, #{pass}, #{bucket} "
-		:cberl.start_link(name, size, host, username, pass, bucket)
-  	end
-#start_link(PoolName, NumCon, Host, Username, Password, BucketName) ->
-#cberl:start_link(PoolName, NumCon, Host, Username, Password, BucketName, Transcoder) ->	
-
+	def open(name, size, host, bucket, username, pass) do  #currently usernames are set to bucket names in this interface.
+		IO.puts "Opening #{name}, #{size}, #{host}, #{username}, #{pass}, #{bucket} "
+  	:cberl.start_link(name, size, host, username, pass, bucket)
+	end
 
      @doc """
  	Shutdown the connection to a particular bucket
@@ -87,25 +85,14 @@ defmodule Couchie do
  	If you want the document to be purged after a period of time, use the Expiration.
 	Set expiration to zero for permanent storage (or use set/3)
 
-	  ## Example
+     ## Example
 
 	      Couchie.set(:default, "key", "document data", 0)
 	  """
 	def set(connection, key, document, expiration) do
-		doc2 = Couchie.preprocess document
-		:cberl.set(connection, key, expiration, doc2)  # NOTE: cberl parameter order is different!
+		:cberl.set(connection, key, expiration, document)  # NOTE: cberl parameter order is different!
 	end
  
-    @doc """
- 	Turn Dict into list for JSON conversion. Pass binaries along unmolested.
-   	"""
-	def preprocess(document) do
-		case document do
-			document when is_list(document) -> document #pass on lists unmolested
-			document when is_binary(document) -> document #pass on binaries unmolested
-			document -> {Dict.to_list document}   #If not a list or binary, it's a hashdict.
-		end
-	end
 
      @doc """
  	Get document.  Keys should be binary. 
@@ -115,11 +102,7 @@ defmodule Couchie do
       #=> {"test_key" 1234567890, "value"}  # The middle figure is the CAS for this document.
   	"""
 	def get(connection, key) do
-		result = :cberl.get(connection, key)
-		case result do
-			{_, {:error, _}} -> result
-			_ -> postprocess(result)
-		end
+		:cberl.get(connection, key)
 	end
  
      @doc """
@@ -129,32 +112,7 @@ defmodule Couchie do
       Couchie.mget(:connection, ["test_key", "another key"])
   	"""
 	def mget(connection, keys) do
-		results = :cberl.mget(connection, keys)
-		case results do
-			{_, {:error, _}} -> results
-			_ -> Enum.map results, &Couchie.postprocess/1
-		end
-	end
-
-    @doc """
- 	Remove the envelope around JSON results. Turn JSON structure into HashDict 
-   	"""
-   	def postprocess({_, {:error, _}}=result) do
-   		result
-   	end
-	def postprocess({key,cas,value}) do
-		case value do
-			{[h|_]} when is_tuple(h) -> #If the first item is a tuple, we figure its a proplist.
-				proplist_to_dict(key, cas, value)
-			value when is_binary(value) -> {key, cas, value}  #just pass on binaries.
-			_ -> {key, cas, value}  # anything else (Eg: straight list) we pass on unmolested
-		end
-	end
-
-	defp proplist_to_dict(key, cas, value) do
-		{value2} = value  # remove enclosing tuple, get list.
-		value3 = HashDict.new value2
-		{key, cas, value3}
+		:cberl.mget(connection, keys)
 	end
 
      @doc """
@@ -166,39 +124,16 @@ defmodule Couchie do
 	def delete(connection, key) do
 		:cberl.remove(connection, key)
 	end
- 
-
 
      @doc """
- 	Simple synchronous fetch view for when you have the specific url & parameters built. 
-  	## Example
+  Delete document.  Key should be binary. 
+    ## Example
 
-      Couchie.view("http://example.com:port/_design/foo/_view/bar")
-  	"""
-##	def view(url) do
-##		case :ibrowse.send_req(url, [], :get) do
-##			{:error, reason} -> {:error, reason}
-##			{:ok, return_code, headers, body} -> view_process(return_code, headers, body)
-##		end
-##	end
-##
-##	def view_process(return_code, headers, body) do
-##		headers_dict = HashDict.new headers
-## this is not finished!  views not implemented yet, as I explore a different direction.		
-
-##	end
-
-
-
-
-
-
-
-
-
+      Couchie.delete(:connection, "test_key")
+    """
+  def query(connection, doc, view, args) do
+    :cberl.view(connection, doc, view, args)
+  end
 
 end
-#
-# 	
-#
 
