@@ -40,7 +40,7 @@ defmodule Couchie do
 	
 	def open(name, size, host) do  
 		IO.puts "Opening #{name}, #{size}, #{host}"
-	  :cberl.start_link(name, size, host)
+    open(name, size, host, '', '', '')
     IO.puts "Opened #{name}, #{size}, #{host}"
  	end
 
@@ -54,7 +54,7 @@ defmodule Couchie do
  	
 	def open(name, size, host, bucket, username, pass) do  #currently usernames are set to bucket names in this interface.
 		IO.puts "Opening #{name}, #{size}, #{host}, #{username}, #{pass}, #{bucket} "
-  	:cberl.start_link(name, size, host, username, pass, bucket)
+  	:cberl.start_link(name, size, host, username, pass, bucket, Couchie.Transcoder)
 	end
 
      @doc """
