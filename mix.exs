@@ -24,15 +24,8 @@ defmodule Couchie.Mixfile do
   # {:erlmc, "0.1", git: "https://github.com/n1rvana/erlmc.git"}
   defp deps do
     [
-		  {:cberl, github: "chitika/cberl"} #chitika is authoritative source
+		  {:cberl, github: "clutchanalytics/cberl"}, #chitika is authoritative source
+      {:jazz, github: "meh/jazz"} 
     ]
   end
 end
-
-#      {:jiffy, github: "davisp/jiffy"},
-#     {:poolboy, github: "devinus/poolboy"},
-#{:cowboy, github: "extend/cowboy"}
-#{:cowboy, github: "extend/cowboy"}
-#{:ibrowse, github: "cmullaparthi/ibrowse"}
-#
-#
