@@ -2,29 +2,22 @@
 
 Couchie is a minimalist API for accessing Couchbase 2.0 servers from within elixir. It should work for elrangers as well, as elixir code can be called from erlang (since it runs on the erlang vm.)
 
-### Status:  CRUD Working, Views being implemented. 
+### Status:  CRUD Working, Simple Views Supported. Requires Elixir 0.13 & R17.0 for maps.
 
 ### Description
 
-Couchie uses cberl (libcouchbase as a NIF) for database access which also includes Jiffy for handling the JSON couchbase speaks.
+Couchie uses cberl (libcouchbase as a NIF) for database access and Jazz to turn the JSON documents that Couchbase returns into Elixir Maps.
 
-Couchie expects and returns two data types: Binaries and Dicts.  This is because Couchbase is a document oriented database which supports two types of documents: raw, and JSON.  While there are many different structures that JSON can take, such as pure lists and complex heirarchies,
-the couchbase view later assumes the documents are effectively dicts, and working just with dicts gives us a cheap, pseudo, ORM. 
-
-Binaries are stored raw in couchbase, while HashDicts are converted to-from JSON.  This conversion is simplistic, as it doesn't dive into the values to see if they are Dicts as well. 
-
-Please note that cberl, and libcouchbase itself are both relatively new, while Jiffy seems stable. 
-
-Elixir record support seems like a good direction for the future, but is out of scope for current work. Feel free to implement it though.
+Couchie has recently become "opinionated" in that it expects you to be storing maps (though any structure that Jazz's encoders can handle should work.)  Decoding has the atoms keys set, so that the keys in the maps you get back will be atoms.
 
 ### Building
 
 Note: to build, you need to have libcouchbase installed.
-  
+
 	brew install libcouchbase
 
 ### Example
-
+(this is a bit obsolete)
 
 	$ iex -S mix
 	Erlang R16B (erts-5.10.1) [source-05f1189] [64-bit] [smp:8:8] [async-threads:10] [hipe] [kernel-poll:false]
@@ -56,9 +49,9 @@ Note: to build, you need to have libcouchbase installed.
 	iex(13)> Couchie.get(:cache, "3-18-13-7-12")
 	{"3-18-13-7-12",216172782113783808,["a",'b']}
 	# Storing data structures, like a HashDict
-	iex(14)> bar = HashDict.new   
+	iex(14)> bar = HashDict.new
 	#HashDict<[]>
-	iex(15)> bar = bar |> HashDict.put("key", "value")   
+	iex(15)> bar = bar |> HashDict.put("key", "value")
 	#HashDict<[{"key", "value"}]>
 	iex(16)> Couchie.set(:default, "bar", bar)
 	:ok
@@ -77,4 +70,3 @@ Couchie.query(:beer, 'beer', 'brewery_beers', [{:limit, 10}])
 
 ##Planned functionality
 - Simple translation from the Couchbase View's REST API to elixir functions, allowing complex queries to be supported.
-
