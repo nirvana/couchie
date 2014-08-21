@@ -26,7 +26,7 @@ defmodule Couchie.Mixfile do
     [
 		  {:cberl, github: "chitika/cberl"}, #chitika is authoritative source
       #{:jazz, github: "devinus/jazz", branch: "0.13"}
-      {:jazz, github: "meh/jazz", tag: "v0.1.1"}
+      {:jazz, github: "meh/jazz", tag: "v0.1.2"}
     ]
   end
 end
