@@ -1,5 +1,10 @@
-.DS_Store
-/ebin
+/_build
 /deps
+/ebin
+/tmp
 erl_crash.dump
+.DS_Store
+*.swp
+/docs
+*~
 PRIVATE.md
