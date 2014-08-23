@@ -24,9 +24,9 @@ defmodule Couchie.Mixfile do
   # {:erlmc, "0.1", git: "https://github.com/n1rvana/erlmc.git"}
   defp deps do
     [
-		  {:cberl, github: "clutchanalytics/cberl"}, #chitika is authoritative source
-      {:jazz, github: "devinus/jazz", branch: "0.13"}
-      # {:jazz, github: "meh/jazz"}
+		  {:cberl, github: "chitika/cberl"}, #chitika is authoritative source
+      #{:jazz, github: "devinus/jazz", branch: "0.13"}
+      {:jazz, github: "meh/jazz"}
     ]
   end
 end
