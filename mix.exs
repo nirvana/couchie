@@ -9,6 +9,7 @@ defmodule Couchie.Mixfile do
   @doc "Project Details"
   def project do
     [ app: :couchie,
+      elixir: "~> 0.15.0",
       version: "0.0.6",
       deps: deps ]
   end

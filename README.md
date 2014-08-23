@@ -2,7 +2,9 @@
 
 Couchie is a minimalist API for accessing Couchbase 2.0 servers from within elixir. It should work for elrangers as well, as elixir code can be called from erlang (since it runs on the erlang vm.)
 
-### Status:  CRUD Working, Simple Views Supported. Requires Elixir 0.13 & R17.0 for maps.
+### Status:  CRUD Working, Simple Views Supported.
+- Tagged version supports R17.0 & Elixir 0.13.0
+- Master requires Elixir 0.15ish and R17ish
 
 ### Description
 
