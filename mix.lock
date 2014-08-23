@@ -1,4 +1,4 @@
 %{"cberl": {:git, "git://github.com/chitika/cberl.git", "00c4a4b2b9a7f5054f69303b0be64a5266e8de3a", []},
   "jazz": {:git, "git://github.com/meh/jazz.git", "e0cf73011f64868534cd229c458e205ce04a6619", []},
-  "jiffy": {:git, "https://github.com/davisp/jiffy.git", "2dbf89f51c547914e994f51457140df9e9a1ca83", [branch: "master"]},
+  "jiffy": {:git, "https://github.com/davisp/jiffy.git", "5cd89c1eda3801bdef790b1e7c0e09259332c0fc", [branch: "master"]},
   "poolboy": {:git, "https://github.com/devinus/poolboy.git", "17d1582533af5c076117e2e1270f4b43faa02f12", [branch: "master"]}}

@@ -1,6 +1,7 @@
 defmodule Couchie.Transcoder do
   require Bitwise
-
+  use Jazz
+  
   @cbe_json 0x02
   @cbe_raw 0x04
   @cbe_str 0x08

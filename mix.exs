@@ -9,11 +9,10 @@ defmodule Couchie.Mixfile do
   @doc "Project Details"
   def project do
     [ app: :couchie,
-      version: "0.0.1",
+      version: "0.0.6",
       deps: deps ]
   end
 
-  @doc "Configuration for the OTP application"
   def application do
     [
 		 applications: [:cberl] #, :ibrowse
@@ -25,7 +24,6 @@ defmodule Couchie.Mixfile do
   defp deps do
     [
 		  {:cberl, github: "chitika/cberl"}, #chitika is authoritative source
-      #{:jazz, github: "devinus/jazz", branch: "0.13"}
       {:jazz, github: "meh/jazz"}
     ]
   end
