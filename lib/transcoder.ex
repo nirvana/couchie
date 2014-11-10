@@ -16,7 +16,7 @@ defmodule Couchie.Transcoder do
     do: do_encode_value(flag ^^^ @str_flag, value)
 
   def do_encode_value(flag, value) when (flag &&& @json_flag) === @json_flag,
-    do: do_encode_value(flag ^^^ @json_flag, JSON.encode!(value))
+    do: do_encode_value(flag ^^^ @json_flag, Poison.encode!(value))
 
   def do_encode_value(flag, value) when (flag &&& @raw_flag) === @raw_flag,
     do: do_encode_value(flag ^^^ @raw_flag, :erlang.term_to_binary(value))
@@ -29,7 +29,7 @@ defmodule Couchie.Transcoder do
     do: decode_value(flag ^^^ @raw_flag, :erlang.binary_to_term(value))
 
   def decode_value(flag, value) when (@json_flag &&& flag) === @json_flag,
-    do: decode_value(flag ^^^ @json_flag, JSON.decode!(value, keys: :atoms))
+    do: decode_value(flag ^^^ @json_flag, Poison.decode!(value, keys: :atoms))
 
   def decode_value(flag, value) when (@str_flag &&& flag) === @str_flag,
     do: decode_value(flag ^^^ @str_flag, value)
