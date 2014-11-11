@@ -9,15 +9,15 @@ defmodule Couchie.Mixfile do
   @doc "Project Details"
   def project do
     [ app: :couchie,
-      elixir: "~> 0.15.0",
+      elixir: "~> 1.0.2",
       version: "0.0.6",
       deps: deps ]
   end
 
   def application do
     [
-		 applications: [:cberl] #, :ibrowse
-	 ]
+		 applications: [:cberl]
+	  ]
   end
 
   # Returns the list of dependencies in the format:
@@ -25,7 +25,7 @@ defmodule Couchie.Mixfile do
   defp deps do
     [
 		  {:cberl, github: "chitika/cberl"}, #chitika is authoritative source
-      {:jazz, github: "meh/jazz"}
+      {:poison, ">= 1.2.0"}
     ]
   end
 end
