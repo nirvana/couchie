@@ -132,4 +132,55 @@ defmodule Couchie do
 	def query(connection, doc, view, args) do
 		:cberl.view(connection, doc, view, args)
 	end
+
+	defmodule DesignDoc do
+		@moduledoc """
+		A struct that encapsulates a single view definition.
+
+		It contains the following fields:
+
+			* `:name`   - the view's name
+			* `:map`    - the map function as JavaScript code
+			* `:reduce` - the reduce function as JavaScript code (optional)
+		"""
+		defstruct name: nil, map: nil, reduce: nil
+	end
+
+	@doc """
+	Creates or updates a view.
+
+	Specify the name of the design you want to create or update as `doc_name`.
+	The third parameter can be one view definition or a list of them. See DesignDoc struct above.
+
+	## Example
+		Couchie.create_view(:db, "my-views", %Couchie.DesignDoc{name: "only_youtube", map: "function(doc, meta) { if (doc.docType == 'youtube') { emit(doc.docType, doc); }}"})
+	"""
+	def create_view(connection, doc_name, %DesignDoc{} = view), do: create_view(connection, doc_name, [view])
+	def create_view(connection, doc_name, views) do
+		design_doc = {[{
+			"views",
+				{ views |> Enum.map(&view_as_json(&1)) }
+			}]}
+		:cberl.set_design_doc(connection, doc_name, design_doc)
+	end
+
+	defp view_as_json(view) do
+		# convert one view definition to a tuple that can later be converted to json
+		{ view.name,
+			{ view
+				|> Map.take([:map, :reduce])
+				|> Enum.filter(fn {k, v} -> !is_nil(v) end) # only put fields that are not nil
+			}
+		}
+	end
+
+	@doc """
+	Delete view.
+	## Example
+
+		Couchie.delete_view(:connection, "design-doc-id")
+	"""
+	def delete_view(connection, doc_name) do
+		:cberl.remove_design_doc(connection, doc_name)
+	end
 end
