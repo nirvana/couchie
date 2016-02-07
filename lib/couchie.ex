@@ -124,6 +124,16 @@ defmodule Couchie do
 	end
 
 	@doc """
+	Empty the contents of the specified bucket, deleting all stored data.
+	## Example
+
+		Couchie.flush(:connection)
+	"""
+	def flush(connection) do
+		:cberl.flush(connection)
+	end
+
+	@doc """
 	Delete document.  Key should be binary.
 	## Example
 
