@@ -100,6 +100,42 @@ defmodule Couchie do
 
 
 	@doc """
+	Increment
+
+	## Example
+
+			iex> Couchie.open(:default)
+			iex> Couchie.set(:default, "test_increment", 1)
+			iex> {:ok, _, "2"} = Couchie.incr(:default, "test_increment")
+			iex> :ok
+			:ok
+
+	"""
+	def incr(connection, key, offset \\ 1, exp \\ 0) do
+		:cberl.incr(connection, key, offset, exp)
+	end
+
+
+	@doc """
+	Decrement
+
+	## Example
+
+			iex> Couchie.open(:default)
+			iex> Couchie.set(:default, "test_decrement", 1)
+			iex> {:ok, _, "0"} = Couchie.decr(:default, "test_decrement")
+			iex> :ok
+			:ok
+
+	"""
+	def decr(connection, key, offset \\ 1, exp \\ 0) do
+		:cberl.decr(connection, key, offset, exp)
+	end
+
+
+
+
+	@doc """
 	Get document.  Keys should be binary.
 	## Example
 
