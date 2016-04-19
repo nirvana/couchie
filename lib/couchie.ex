@@ -157,12 +157,12 @@ defmodule Couchie do
 	end
 
 	@doc """
-	Delete document.  Key should be binary.
+	Remove document.  Key should be binary.
 	## Example
 
-		Couchie.delete(:connection, "test_key")
+		Couchie.remove(:connection, "test_key")
 	"""
-	def delete(connection, key) do
+	def remove(connection, key) do
 		:cberl.remove(connection, key)
 	end
 
@@ -182,7 +182,7 @@ defmodule Couchie do
 
 		Couchie.delete(:connection, "test_key")
 	"""
-	def query(connection, doc, view, args) do
+	def view(connection, doc, view, args) do
 		:cberl.view(connection, doc, view, args)
 	end
 
@@ -231,9 +231,9 @@ defmodule Couchie do
 	Delete view.
 	## Example
 
-		Couchie.delete_view(:connection, "design-doc-id")
+		Couchie.remove_view(:connection, "design-doc-id")
 	"""
-	def delete_view(connection, doc_name) do
+	def remove_view(connection, doc_name) do
 		:cberl.remove_design_doc(connection, doc_name)
 	end
 end
