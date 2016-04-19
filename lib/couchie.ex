@@ -227,6 +227,30 @@ defmodule Couchie do
 		}
 	end
 
+
+	@doc """
+
+
+	## Example
+
+			iex> Couchie.open(:default)
+			iex> {:ok, _results, _meta} = Couchie.query(:default, "select * from default limit 1")
+			iex> :ok
+			:ok
+
+	"""
+	def query(connection, query) do
+		query = "statement=#{query}" |> to_char_list
+		case :cberl.http(connection, '', query, 'application/x-www-form-urlencoded; charset=UTF-8', :post, :n1ql) do
+			{:ok, 200, result} ->
+				results = Poison.decode!(result)
+				{:ok, results["results"], Map.delete(results, "results")}
+			err ->
+				err
+		end
+	end
+
+
 	@doc """
 	Delete view.
 	## Example
