@@ -186,7 +186,7 @@ defmodule Couchie do
 		{ view.name,
 			{ view
 				|> Map.take([:map, :reduce])
-				|> Enum.filter(fn {k, v} -> !is_nil(v) end) # only put fields that are not nil
+				|> Enum.filter(fn {_k, v} -> !is_nil(v) end) # only put fields that are not nil
 			}
 		}
 	end
