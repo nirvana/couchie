@@ -29,7 +29,7 @@ defmodule Couchie.Transcoder do
     do: decode_value(flag ^^^ @raw_flag, :erlang.binary_to_term(value))
 
   def decode_value(flag, value) when (@json_flag &&& flag) === @json_flag,
-    do: decode_value(flag ^^^ @json_flag, Poison.decode!(value, keys: :atoms))
+    do: decode_value(flag ^^^ @json_flag, Poison.decode!(value))
 
   def decode_value(flag, value) when (@str_flag &&& flag) === @str_flag,
     do: decode_value(flag ^^^ @str_flag, value)
