@@ -91,6 +91,16 @@ defmodule Couchie do
 		:cberl.set(connection, key, expiration, document)  # NOTE: cberl parameter order is different!
 	end
 
+	@doc """
+	Create document if it doesn't exist, or replace it if it does.
+	First parameter is the connection you passed into Couchie.open()
+	If you want to verify the document hasn't been updated since the last read,
+	use the cas property from the last read.
+	"""
+	def set(connection, key, document, expiration, cas) do
+		:cberl.set(connection, key, expiration, document, :standard, cas)
+	end
+
 
 	@doc """
 	Get document.  Keys should be binary.
