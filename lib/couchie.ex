@@ -260,4 +260,35 @@ defmodule Couchie do
 	def remove_view(connection, doc_name) do
 		:cberl.remove_design_doc(connection, doc_name)
 	end
+
+	@doc """
+	Merges the couchbase document with a given map, to simplify cases where you are updating a few properties
+
+	If "safe" is specified then CAS is used to verify it hasn't been changed while modifying.
+
+	If doc has changed {:error, :key_eexists} is returned.
+
+	## Example
+
+	  	iex> Couchie.open(:default)
+	  	...> Couchie.set(:default, "somekey", %{"key1" => 1, "key2" => 2})
+	  	...> Couchie.merge(:default, "somekey", %{"key2" => "changed", "key3" => 3})
+	  	...> {"somekey", _cas, doc} = Couchie.get(:default, "somekey")
+	  	...> doc
+	  	%{"key1" => 1, "key2" => "changed", "key3" => 3}
+
+	"""
+	def merge(connection, key, doc, safe \\ false) do
+		case Couchie.get(connection, key) do
+			{^key, cas , old_doc} ->
+				cas_to_use = case safe do
+					true ->
+						cas
+					false ->
+						0
+				end
+				Couchie.set(connection, key, Map.merge(old_doc, doc), 0, cas_to_use)
+			_ ->
+				{:error, :key_enoent}
+		end
 end
