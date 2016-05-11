@@ -314,4 +314,5 @@ defmodule Couchie do
 			_ ->
 				{:error, :key_enoent}
 		end
+	end
 end
