@@ -18,8 +18,9 @@ defmodule Couchie do
 	## Examples
 
 			# open connection named "default_connection" to the default bucket, which should be used for testing only
-			Couchie.open(:default_connection)
-			{ok, <0.XX.0>} #=> successful connection to default bucket on localhost
+			iex> {:ok, _} = Couchie.open(:default_connection) 
+			iex> :ok
+			:ok
 
 			# if your bucket is password protected:
 			Couchie.open(:secret, 10, 'localhost:8091', 'bucket_name', 'bucket_pasword')
@@ -56,7 +57,12 @@ defmodule Couchie do
 	@doc """
 	Shutdown the connection to a particular bucket
 
-		Couchie.close(:connection)
+	## Examples
+
+			iex> Couchie.open(:connection)
+			iex> Couchie.close(:connection)
+			:ok
+
 	"""
 	def close(pool) do
 		:cberl.stop(pool)
@@ -67,8 +73,11 @@ defmodule Couchie do
 	First parameter is the connection you passed into Couchie.open()
 
 	## Examples
+			
+			iex> Couchie.open(:default)
+			iex> Couchie.set(:default, "key", "document data")
+			:ok
 
-		Couchie.set(:default, "key", "document data")
 	"""
 	def set(connection, key, document) do
 		Couchie.set(connection, key, document, 0)
@@ -82,7 +91,10 @@ defmodule Couchie do
 
 	## Example
 
-		Couchie.set(:default, "key", "document data", 0)
+			iex> Couchie.open(:default)
+			iex> Couchie.set(:default, "key", "document data", 0)
+			:ok
+
 	"""
 	def set(connection, key, document, expiration) do
 		:cberl.set(connection, key, expiration, document)  # NOTE: cberl parameter order is different!
@@ -93,6 +105,13 @@ defmodule Couchie do
 	First parameter is the connection you passed into Couchie.open()
 	If you want to verify the document hasn't been updated since the last read,
 	use the cas property from the last read.
+
+	## Example
+
+      iex> Couchie.open(:default)
+      iex> Couchie.set(:default, "key", "document data", 0, 12345)
+      {:error, :key_eexists}
+
 	"""
 	def set(connection, key, document, expiration, cas) do
 		:cberl.set(connection, key, expiration, document, :standard, cas)
@@ -138,9 +157,13 @@ defmodule Couchie do
 	@doc """
 	Get document.  Keys should be binary.
 	## Example
+			
+			iex> Couchie.open(:default)
+			iex> Couchie.set(:default, "test_key", %{:blah => "blah"})
+			iex> {"test_key", _cas , res} = Couchie.get(:default, "test_key")
+			iex> res
+			%{"blah" => "blah"}
 
-		Couchie.get(:connection, "test_key")
-		#=> {"test_key" 1234567890, "value"}  # The middle figure is the CAS for this document.
 	"""
 	def get(connection, key) do
 		:cberl.get(connection, key)
