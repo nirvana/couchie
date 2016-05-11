@@ -10,6 +10,7 @@ defmodule Couchie.Transcoder do
   @str_flag  0x04 <<< 24
   @str_flag_legacy 0x08
 
+  @flag_mask 0x02 <<< 24 ||| 0x02 ||| 0x03 <<< 24 ||| 0x04 ||| 0x04 <<< 24 ||| 0x08
   #API defined by cberl_transcoder.erl
 
   # Encoder
@@ -18,15 +19,15 @@ defmodule Couchie.Transcoder do
     do_encode_value(flag(encoders), value)
   end
 
-  def do_encode_value(flag, value) when (flag &&& @str_flag) === @str_flag do
+  def do_encode_value(flag, value) when (flag &&& @flag_mask) === @str_flag do
     do_encode_value(flag ^^^ @str_flag, value)
   end
 
-  def do_encode_value(flag, value) when (flag &&& @json_flag) === @json_flag do
+  def do_encode_value(flag, value) when (flag &&& @flag_mask) === @json_flag do
     do_encode_value(flag ^^^ @json_flag, Poison.encode!(value))
   end
 
-  def do_encode_value(flag, value) when (flag &&& @raw_flag) === @raw_flag do
+  def do_encode_value(flag, value) when (flag &&& @flag_mask) === @raw_flag do
     do_encode_value(flag ^^^ @raw_flag, :erlang.term_to_binary(value))
   end
 
@@ -34,26 +35,26 @@ defmodule Couchie.Transcoder do
 
   # Decoder
 
-  def decode_value(flag, value) when (@raw_flag &&& flag) === @raw_flag do
+  def decode_value(flag, value) when (flag &&& @flag_mask) === @raw_flag do
     decode_value(flag ^^^ @raw_flag, :erlang.binary_to_term(value))
   end
-  def decode_value(flag, value) when (@raw_flag_legacy &&& flag) === @raw_flag_legacy do
+  def decode_value(flag, value) when (flag &&& @flag_mask) === @raw_flag_legacy do
     decode_value(flag ^^^ @raw_flag_legacy, :erlang.binary_to_term(value))
   end
 
 
-  def decode_value(flag, value) when (@json_flag &&& flag) === @json_flag  do
+  def decode_value(flag, value) when (flag &&& @flag_mask) === @json_flag  do
     decode_value(flag ^^^ @json_flag, Poison.decode!(value))
   end
-  def decode_value(flag, value) when (flag &&& @json_flag_legacy) === @json_flag_legacy do
+  def decode_value(flag, value) when (flag &&& @flag_mask) === @json_flag_legacy do
     decode_value(flag ^^^ @json_flag_legacy, Poison.decode!(value))
   end
 
 
-  def decode_value(flag, value) when (@str_flag &&& flag) === @str_flag do
+  def decode_value(flag, value) when (flag &&& @flag_mask) === @str_flag do
     decode_value(flag ^^^ @str_flag, value)
   end
-  def decode_value(flag, value) when (flag &&& @str_flag_legacy) === @str_flag_legacy do
+  def decode_value(flag, value) when (flag &&& @flag_mask) === @str_flag_legacy do
     decode_value(flag ^^^ @str_flag_legacy, value)
   end
 
