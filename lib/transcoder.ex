@@ -1,6 +1,10 @@
 defmodule Couchie.Transcoder do
   use Bitwise
 
+  #When editing documents in the administrator flags are changed to 0x01.
+  #We're going to treat it as JSON data. Better ideas welcome.
+  @gui_legacy 0x01
+
   @json_flag 0x02 <<< 24
   @json_flag_legacy 0x02
 
@@ -10,7 +14,7 @@ defmodule Couchie.Transcoder do
   @str_flag  0x04 <<< 24
   @str_flag_legacy 0x08
 
-  @flag_mask 0x02 <<< 24 ||| 0x02 ||| 0x03 <<< 24 ||| 0x04 ||| 0x04 <<< 24 ||| 0x08
+  @flag_mask 0x01 ||| 0x02 <<< 24 ||| 0x02 ||| 0x03 <<< 24 ||| 0x04 ||| 0x04 <<< 24 ||| 0x08
   #API defined by cberl_transcoder.erl
 
   # Encoder
@@ -47,6 +51,9 @@ defmodule Couchie.Transcoder do
     decode_value(flag ^^^ @json_flag, Poison.decode!(value))
   end
   def decode_value(flag, value) when (flag &&& @flag_mask) === @json_flag_legacy do
+    decode_value(flag ^^^ @json_flag_legacy, Poison.decode!(value))
+  end
+  def decode_value(flag, value) when (flag &&& @flag_mask) === @gui_legacy do
     decode_value(flag ^^^ @json_flag_legacy, Poison.decode!(value))
   end
 
