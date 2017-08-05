@@ -9,8 +9,8 @@ defmodule Couchie.Mixfile do
   @doc "Project Details"
   def project do
     [ app: :couchie,
-      elixir: "~> 1.0.2",
-      version: "0.0.6",
+      elixir: ">= 1.0.2",
+      version: "0.0.7",
       deps: deps ]
   end
 
@@ -24,7 +24,7 @@ defmodule Couchie.Mixfile do
   # {:erlmc, "0.1", git: "https://github.com/n1rvana/erlmc.git"}
   defp deps do
     [
-		  {:cberl, github: "chitika/cberl"}, #chitika is authoritative source
+		  {:cberl, github: "muut/cberl"}, #chitika is authoritative source
       {:poison, ">= 1.2.0"}
     ]
   end

@@ -18,8 +18,9 @@ defmodule Couchie do
 	## Examples
 
 			# open connection named "default_connection" to the default bucket, which should be used for testing only
-			Couchie.open(:default_connection)
-			{ok, <0.XX.0>} #=> successful connection to default bucket on localhost
+			iex> {:ok, _} = Couchie.open(:default_connection) 
+			iex> :ok
+			:ok
 
 			# if your bucket is password protected:
 			Couchie.open(:secret, 10, 'localhost:8091', 'bucket_name', 'bucket_pasword')
@@ -38,9 +39,7 @@ defmodule Couchie do
 	end
 
 	def open(name, size, host) do
-		IO.puts "Opening #{name}, #{size}, #{host}"
 	open(name, size, host, '', '', '')
-	IO.puts "Opened #{name}, #{size}, #{host}"
 	end
 
 	def open(name, size, host, bucket) do  # assume the bucket user and pass are the same as bucket name
@@ -52,14 +51,18 @@ defmodule Couchie do
 	end
 
 	def open(name, size, host, bucket, username, pass) do  #currently usernames are set to bucket names in this interface.
-		IO.puts "Opening #{name}, #{size}, #{host}, #{username}, #{pass}, #{bucket} "
 	:cberl.start_link(name, size, host, username, pass, bucket, Couchie.Transcoder)
 	end
 
 	@doc """
 	Shutdown the connection to a particular bucket
 
-		Couchie.close(:connection)
+	## Examples
+
+			iex> Couchie.open(:connection)
+			iex> Couchie.close(:connection)
+			:ok
+
 	"""
 	def close(pool) do
 		:cberl.stop(pool)
@@ -70,8 +73,11 @@ defmodule Couchie do
 	First parameter is the connection you passed into Couchie.open()
 
 	## Examples
+			
+			iex> Couchie.open(:default)
+			iex> Couchie.set(:default, "key", "document data")
+			:ok
 
-		Couchie.set(:default, "key", "document data")
 	"""
 	def set(connection, key, document) do
 		Couchie.set(connection, key, document, 0)
@@ -85,19 +91,79 @@ defmodule Couchie do
 
 	## Example
 
-		Couchie.set(:default, "key", "document data", 0)
+			iex> Couchie.open(:default)
+			iex> Couchie.set(:default, "key", "document data", 0)
+			:ok
+
 	"""
 	def set(connection, key, document, expiration) do
 		:cberl.set(connection, key, expiration, document)  # NOTE: cberl parameter order is different!
 	end
 
+	@doc """
+	Create document if it doesn't exist, or replace it if it does.
+	First parameter is the connection you passed into Couchie.open()
+	If you want to verify the document hasn't been updated since the last read,
+	use the cas property from the last read.
+
+	## Example
+
+      iex> Couchie.open(:default)
+      iex> Couchie.set(:default, "key", "document data", 0, 12345)
+      {:error, :key_eexists}
+
+	"""
+	def set(connection, key, document, expiration, cas) do
+		:cberl.set(connection, key, expiration, document, :standard, cas)
+	end
+
+
+	@doc """
+	Increment
+
+	## Example
+
+			iex> Couchie.open(:default)
+			iex> Couchie.set(:default, "test_increment", 1)
+			iex> {:ok, _, "2"} = Couchie.incr(:default, "test_increment")
+			iex> :ok
+			:ok
+
+	"""
+	def incr(connection, key, offset \\ 1, exp \\ 0) do
+		:cberl.incr(connection, key, offset, exp)
+	end
+
+
+	@doc """
+	Decrement
+
+	## Example
+
+			iex> Couchie.open(:default)
+			iex> Couchie.set(:default, "test_decrement", 1)
+			iex> {:ok, _, "0"} = Couchie.decr(:default, "test_decrement")
+			iex> :ok
+			:ok
+
+	"""
+	def decr(connection, key, offset \\ 1, exp \\ 0) do
+		:cberl.decr(connection, key, offset, exp)
+	end
+
+
+
 
 	@doc """
 	Get document.  Keys should be binary.
 	## Example
+			
+			iex> Couchie.open(:default)
+			iex> Couchie.set(:default, "test_key", %{:blah => "blah"})
+			iex> {"test_key", _cas , res} = Couchie.get(:default, "test_key")
+			iex> res
+			%{"blah" => "blah"}
 
-		Couchie.get(:connection, "test_key")
-		#=> {"test_key" 1234567890, "value"}  # The middle figure is the CAS for this document.
 	"""
 	def get(connection, key) do
 		:cberl.get(connection, key)
@@ -114,12 +180,12 @@ defmodule Couchie do
 	end
 
 	@doc """
-	Delete document.  Key should be binary.
+	Remove document.  Key should be binary.
 	## Example
 
-		Couchie.delete(:connection, "test_key")
+		Couchie.remove(:connection, "test_key")
 	"""
-	def delete(connection, key) do
+	def remove(connection, key) do
 		:cberl.remove(connection, key)
 	end
 
@@ -139,7 +205,7 @@ defmodule Couchie do
 
 		Couchie.delete(:connection, "test_key")
 	"""
-	def query(connection, doc, view, args) do
+	def view(connection, doc, view, args) do
 		:cberl.view(connection, doc, view, args)
 	end
 
@@ -179,18 +245,74 @@ defmodule Couchie do
 		{ view.name,
 			{ view
 				|> Map.take([:map, :reduce])
-				|> Enum.filter(fn {k, v} -> !is_nil(v) end) # only put fields that are not nil
+				|> Enum.filter(fn {_k, v} -> !is_nil(v) end) # only put fields that are not nil
 			}
 		}
 	end
+
+
+	@doc """
+
+
+	## Example
+
+			iex> Couchie.open(:default)
+			iex> {:ok, _results, _meta} = Couchie.query(:default, "select * from default limit 1")
+			iex> :ok
+			:ok
+
+	"""
+	def query(connection, query) do
+		query = "statement=#{query}" |> to_char_list
+		case :cberl.http(connection, '', query, 'application/x-www-form-urlencoded; charset=UTF-8', :post, :n1ql) do
+			{:ok, 200, result} ->
+				results = Poison.decode!(result)
+				{:ok, results["results"], Map.delete(results, "results")}
+			err ->
+				err
+		end
+	end
+
 
 	@doc """
 	Delete view.
 	## Example
 
-		Couchie.delete_view(:connection, "design-doc-id")
+		Couchie.remove_view(:connection, "design-doc-id")
 	"""
-	def delete_view(connection, doc_name) do
+	def remove_view(connection, doc_name) do
 		:cberl.remove_design_doc(connection, doc_name)
+	end
+
+	@doc """
+	Merges the couchbase document with a given map, to simplify cases where you are updating a few properties
+
+	If "safe" is specified then CAS is used to verify it hasn't been changed while modifying.
+
+	If doc has changed {:error, :key_eexists} is returned.
+
+	## Example
+
+	  	iex> Couchie.open(:default)
+	  	...> Couchie.set(:default, "somekey", %{"key1" => 1, "key2" => 2})
+	  	...> Couchie.merge(:default, "somekey", %{"key2" => "changed", "key3" => 3})
+	  	...> {"somekey", _cas, doc} = Couchie.get(:default, "somekey")
+	  	...> doc
+	  	%{"key1" => 1, "key2" => "changed", "key3" => 3}
+
+	"""
+	def merge(connection, key, doc, safe \\ false) do
+		case Couchie.get(connection, key) do
+			{^key, cas , old_doc} ->
+				cas_to_use = case safe do
+					true ->
+						cas
+					false ->
+						0
+				end
+				Couchie.set(connection, key, Map.merge(old_doc, doc), 0, cas_to_use)
+			_ ->
+				{:error, :key_enoent}
+		end
 	end
 end
